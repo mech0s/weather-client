@@ -1,0 +1,15 @@
+{
+  "name": "weather-client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "link_smart_thing_directory": "github:mech0s/linksmart-node-client",
+    "node-dns-sd": "^0.4.2"
+  }
+}
