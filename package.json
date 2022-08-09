@@ -9,6 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@node-wot/binding-http": "^0.8.1",
+    "@node-wot/core": "^0.8.1",
     "link_smart_thing_directory": "github:mech0s/linksmart-node-client",
     "node-dns-sd": "^0.4.2"
   }
