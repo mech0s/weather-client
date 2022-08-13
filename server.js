@@ -25,15 +25,27 @@ const directorySearchApiPromise = new Promise ((myResolve, myReject) => {
 const weathercontrolDirectoryPromise = new Promise((myResolve,myReject) => {
     directorySearchApiPromise.then( (searchApi) => {
         //searchApi.searchXpathGet
-        //$[?(@.title=='SenseHatEnv')]
-        //
         searchApi.searchJsonpathGet("$[?(@.title=='WeatherControlThing')]", (error, data,response ) => {
             if (error) {
                 console.error(error);
                 myReject(error);
               } else {
-                console.log('API called successfully. Returned data: ' + data);
-                myResolve(data);
+                myResolve(JSON.parse(response.text)[0]);
+              }
+        })
+    } )
+
+})
+
+const sensehatDirectoryPromise = new Promise((myResolve,myReject) => {
+    directorySearchApiPromise.then( (searchApi) => {
+        //searchApi.searchXpathGet
+        searchApi.searchJsonpathGet("$[?(@.title=='SenseHatEnv')]", (error, data,response ) => {
+            if (error) {
+                console.error(error);
+                myReject(error);
+              } else {
+                myResolve(JSON.parse(response.text)[0]);
               }
         })
     } )
@@ -44,6 +56,9 @@ weathercontrolDirectoryPromise.then((td) => {
     console.log(td);
 })
 
+sensehatDirectoryPromise.then((td) => {
+    console.log(td);
+})
 
 const { Servient, Helpers } = require("@node-wot/core");
 const { HttpClientFactory } = require('@node-wot/binding-http');
