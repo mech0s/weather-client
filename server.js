@@ -60,6 +60,9 @@ sensehatDirectoryPromise.then((td) => {
     console.log(td);
 })
 
+//
+// TODO //////////  use these Promises in place of WoTHelpers.fetch below //////
+
 const { Servient, Helpers } = require("@node-wot/core");
 const { HttpClientFactory } = require('@node-wot/binding-http');
 
