@@ -25,13 +25,15 @@ const directorySearchApiPromise = new Promise ((myResolve, myReject) => {
 const weathercontrolDirectoryPromise = new Promise((myResolve,myReject) => {
     directorySearchApiPromise.then( (searchApi) => {
         //searchApi.searchXpathGet
-        searchApi.searchJsonpathGet("weathercontrol", (error, data,response ) => {
+        //$[?(@.title=='SenseHatEnv')]
+        //
+        searchApi.searchJsonpathGet("$[?(@.title=='WeatherControlThing')]", (error, data,response ) => {
             if (error) {
                 console.error(error);
                 myReject(error);
               } else {
                 console.log('API called successfully. Returned data: ' + data);
-                myResolve(error);
+                myResolve(data);
               }
         })
     } )
