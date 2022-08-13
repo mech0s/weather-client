@@ -1,5 +1,48 @@
-// client.js
-// Required steps to create a servient for a client
+const mDnsSd = require('node-dns-sd');
+const LinkSmartThingDirectory = require('link_smart_thing_directory');
+
+
+
+const directorySearchApiPromise = new Promise ((myResolve, myReject) => {
+    mDnsSd.discover({
+        name: '_wot._tcp.local'
+        }).then((device_list) =>{
+            const directory = {};  // only one directory handled for now
+            device_list.forEach(element => {
+                directory.address = element.address;
+                directory.port = element.service.port; 
+            });
+            const apiClient = new LinkSmartThingDirectory.ApiClient(directory.address+":"+directory.port);
+            const searchApi = new LinkSmartThingDirectory.SearchApi(apiClient);
+            myResolve(searchApi);
+        }).catch((error) => {
+          console.error(error);
+          myReject(error);
+        });
+
+})
+
+const weathercontrolDirectoryPromise = new Promise((myResolve,myReject) => {
+    directorySearchApiPromise.then( (searchApi) => {
+        //searchApi.searchXpathGet
+        searchApi.searchJsonpathGet("weathercontrol", (error, data,response ) => {
+            if (error) {
+                console.error(error);
+                myReject(error);
+              } else {
+                console.log('API called successfully. Returned data: ' + data);
+                myResolve(error);
+              }
+        })
+    } )
+
+})
+
+weathercontrolDirectoryPromise.then((td) => {
+    console.log(td);
+})
+
+
 const { Servient, Helpers } = require("@node-wot/core");
 const { HttpClientFactory } = require('@node-wot/binding-http');
 
