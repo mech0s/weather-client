@@ -16,8 +16,8 @@ async function main(){
         mDnsSd.discover({
             name: '_wot._tcp.local'
             }).then((device_list) =>{
-                const directory = {};  // only one directory handled for now
-                device_list.forEach(element => {
+                const directory = {address:"127.0.0.1", port:8081};  
+                device_list.forEach(element => { // only one directory handled for now, defaults to 127.0.0.1:8081
                     directory.address = element.address;
                     directory.port = element.service.port; 
                 });
