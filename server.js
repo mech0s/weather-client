@@ -5,8 +5,8 @@ const { Servient, Helpers } = require("@node-wot/core");
 const { HttpClientFactory } = require('@node-wot/binding-http');
 
 const msPoll = 1000;
-const humidityThreshold = 34.0;
-const temperatureThreshold = 39.0;
+const humidityThreshold = 44.0;
+const temperatureThreshold = 35.0;
 
 main();
 
@@ -83,7 +83,9 @@ async function main(){
 
         let dry = humidity < humidityThreshold;
         let cool = temperature < temperatureThreshold;
-        console.log(JSON.stringify({humidity: humidity, 
+        console.log(JSON.stringify({humidityThreshold: humidityThreshold,
+                                    temperatureThreshold: temperatureThreshold,
+                                    humidity: humidity, 
                                     temperature: temperature,
                                     dry: dry,
                                     cool: cool
