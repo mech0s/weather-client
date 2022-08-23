@@ -5,8 +5,6 @@ const { Servient, Helpers } = require("@node-wot/core");
 const { HttpClientFactory } = require('@node-wot/binding-http');
 
 const msPoll = 1000;
-const humidityThreshold = 44.0;
-const temperatureThreshold = 35.0;
 
 main();
 
@@ -46,7 +44,7 @@ async function main(){
 
     })
 
-    const sensehatDirectoryPromise = new Promise((myResolve,myReject) => {
+    const sensehatenvDirectoryPromise = new Promise((myResolve,myReject) => {
         directorySearchApiPromise.then( (searchApi) => {
             //searchApi.searchXpathGet
             searchApi.searchJsonpathGet("$[?(@.title=='SenseHatEnv')]", (error, data,response ) => {
@@ -61,25 +59,43 @@ async function main(){
 
     })
 
+    const sensehatthresholdsDirectoryPromise = new Promise((myResolve,myReject) => {
+        directorySearchApiPromise.then( (searchApi) => {
+            //searchApi.searchXpathGet
+            searchApi.searchJsonpathGet("$[?(@.title=='SenseHatThresholds')]", (error, data,response ) => {
+                if (error) {
+                    console.error(error);
+                    myReject(error);
+                } else {
+                    myResolve(JSON.parse(response.text)[0]);
+                }
+            })
+        } )
 
-    let weathercontrolTd,sensehatTd;
-    [weathercontrolTd,sensehatTd] = await Promise.all([weathercontrolDirectoryPromise,sensehatDirectoryPromise]);
+    })
+
+    let weathercontrolTd,sensehatenvTd,sensehatthresholdsTd;
+    [weathercontrolTd,sensehatenvTd,sensehatthresholdsTd] = await Promise.all([weathercontrolDirectoryPromise,sensehatenvDirectoryPromise,sensehatthresholdsDirectoryPromise]);
 
 
     const servient = new Servient();
     servient.addClientFactory(new HttpClientFactory(null));
     let WoT = await servient.start()
 
-    let weathercontrolThing, sensehatThing
+    let weathercontrolThing, sensehatenvThing
     weathercontrolThing = await WoT.consume(weathercontrolTd);
-    sensehatThing = await WoT.consume(sensehatTd);
+    sensehatenvThing = await WoT.consume(sensehatenvTd);
+    sensehatthresholdsThing = await WoT.consume(sensehatthresholdsTd);
 
     let lastDry = true;
     let lastCool = true;
     await weathercontrolThing.invokeAction("clear");
     setInterval(  ( async () => {
-        let temperature = await ( await sensehatThing.readProperty("temperature")).value();
-        let humidity = await ( await sensehatThing.readProperty("humidity")).value();
+        let temperature = await ( await sensehatenvThing.readProperty("temperature")).value();
+        let humidity = await ( await sensehatenvThing.readProperty("humidity")).value();
+
+        let temperatureThreshold = await ( await sensehatthresholdsThing.readProperty("temperature-threshold")).value();
+        let humidityThreshold = await ( await sensehatthresholdsThing.readProperty("humidity-threshold")).value();
 
         let dry = humidity < humidityThreshold;
         let cool = temperature < temperatureThreshold;
